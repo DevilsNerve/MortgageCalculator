@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Calculator</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container my-5">
+        <h2 class="mb-4">Mortgage Calculator</h2>
+
+        <form>
+            <!-- Include taxes & fees -->
+            <div class="mb-3">
+                <label for="budget" class="form-label">Purchase budget (Include taxes & fees)</label>
+                <input type="number" class="form-control" id="budget" value="468750">
+            </div>
+
+            <!-- Home price -->
+            <div class="mb-3">
+                <label for="homePrice" class="form-label">Home price</label>
+                <input type="number" class="form-control" id="homePrice" value="93750">
+            </div>
+
+            <!-- Down payment -->
+            <div class="mb-3">
+                <label for="downPayment" class="form-label">Down payment</label>
+                <input type="number" class="form-control" id="downPayment" value="20">
+                <div class="form-text">Enter value in percentage.</div>
+            </div>
+
+            <!-- Loan term -->
+            <div class="mb-3">
+                <label for="loanTerm" class="form-label">Loan term</label>
+                <select class="form-select" id="loanTerm">
+                    <option selected>30-yr fixed</option>
+                    <!-- Additional terms can be added here -->
+                </select>
+            </div>
+
+            <!-- Interest -->
+            <div class="mb-3">
+                <label for="interest" class="form-label">Interest</label>
+                <input type="number" class="form-control" id="interest" value="6">
+                <div class="form-text">Enter value in percentage.</div>
+            </div>
+
+            <!-- State -->
+            <div class="mb-3">
+                <label for="state" class="form-label">State</label>
+                <select class="form-select" id="state">
+                    <option selected>Nebraska</option>
+                    <!-- Additional states can be added here -->
+                </select>
+            </div>
+
+            <!-- Credit score -->
+            <div class="mb-3">
+                <label for="creditScore" class="form-label">Credit score</label>
+                <select class="form-select" id="creditScore">
+                    <option selected>660 - 679</option>
+                    <!-- Additional credit scores can be added here -->
+                </select>
+            </div>
+
+            <!-- Property tax (yearly) -->
+            <div class="mb-3">
+                <label for="propertyTax" class="form-label">Property tax (yearly)</label>
+                <input type="number" class="form-control" id="propertyTax" value="5859">
+            </div>
+
+            <!-- Home insurance (yearly) -->
+            <div class="mb-3">
+                <label for="homeInsurance" class="form-label">Home insurance (yearly)</label>
+                <input type="number" class="form-control" id="homeInsurance" value="1641">
+            </div>
+
+            <!-- Private mortgage insurance (monthly) -->
+            <div class="mb-3">
+                <label for="privateMortgageInsurance" class="form-label">Private mortgage insurance (monthly)</label>
+                <input type="number" class="form-control" id="privateMortgageInsurance" value="0">
+            </div>
+
+            <!-- Homeowners association (monthly) -->
+            <div class="mb-3">
+                <label for="hoa" class="form-label">Homeowners association (monthly)</label>
+                <input type="number" class="form-control" id="hoa" value="0">
+            </div>
+
+            <!-- Button to perform calculation (You might want to attach a JS function here) -->
+            <button type="submit" class="btn btn-primary">Calculate</button>
+        </form>
+
+        <!-- Results section -->
+        <div class="mt-5">
+            <h3>Results</h3>
+            <ul class="list-group">
+                <li class="list-group-item">Total monthly payment: $2,873</li>
+                <li class="list-group-item">Loan: $2,248</li>
+                <li class="list-group-item">Taxes & fees: $625</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS (Optional but might be needed for some Bootstrap components) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.querySelector("form");
+
+    form.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        // Getting input values
+        let homePrice = parseFloat(document.querySelector("#homePrice").value);
+        let downPaymentPercentage = parseFloat(document.querySelector("#downPayment").value) / 100;
+        let interest = parseFloat(document.querySelector("#interest").value) / 100 / 12;
+        let loanTerm = parseFloat(document.querySelector("#loanTerm").options[document.querySelector("#loanTerm").selectedIndex].text.split('-')[0]) * 12;
+        let propertyTax = parseFloat(document.querySelector("#propertyTax").value) / 12;
+        let homeInsurance = parseFloat(document.querySelector("#homeInsurance").value) / 12;
+        let privateMortgageInsurance = parseFloat(document.querySelector("#privateMortgageInsurance").value);
+        let hoa = parseFloat(document.querySelector("#hoa").value);
+
+        // Calculating the principal loan amount
+        let principal = homePrice - (homePrice * downPaymentPercentage);
+
+        // Calculating monthly payment using the formula
+        let monthlyPayment = (principal * interest * Math.pow(1 + interest, loanTerm)) / (Math.pow(1 + interest, loanTerm) - 1);
+        
+        // Adding property tax, home insurance, private mortgage insurance, and hoa to the monthly payment
+        monthlyPayment += propertyTax + homeInsurance + privateMortgageInsurance + hoa;
+
+        // Updating the results
+        document.querySelector(".list-group-item:nth-child(1)").innerText = "Total monthly payment: $" + monthlyPayment.toFixed(2);
+        document.querySelector(".list-group-item:nth-child(2)").innerText = "Loan: $" + monthlyPayment.toFixed(2); // This is an oversimplification, you might want to adjust this based on other factors
+        document.querySelector(".list-group-item:nth-child(3)").innerText = "Taxes & fees: $" + (propertyTax + homeInsurance + privateMortgageInsurance + hoa).toFixed(2);
+    });
+});
+
+</script>
+</html>
